@@ -24,6 +24,8 @@ images = preprocess(dataset.images, config, is_training=False)
 
 # Generate Adversarial Images and Adversarial Masks
 adversaries, adversaries_mask = network.generate_images(images)
+for i, adv in enumerate(adversaries):
+    adversaries[i] = images[i] + adversaries_mask[i]
 
 # Save adversarial image
 scipy.misc.imsave('results/result.jpg', adversaries[0])
