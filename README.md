@@ -1,4 +1,4 @@
-# AdvFaces
+# AdvFaces: Adversarial Face Synthesis
 
 
 1. Download pretrained file and extract in `pretrained` folder:
