@@ -2,7 +2,7 @@
 """
 # MIT License
 # 
-# Copyright (c) 2019 Debayan Deb
+# Copyright (c) 2018 Yichun Shi
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,7 @@ class DataClass(object):
             last_cluster = permut_indices[cutoff:]
             clusters.append(last_cluster)
         return clusters
+
 
 class Dataset():
 
@@ -132,6 +133,17 @@ class Dataset():
             self.labels = np.ones((self.images.shape[0]), dtype=np.int32)  
 
         self.init_classes()
+        self.targets = []
+        for i, c in enumerate(self.labels):
+            if self.mode == 'target':
+                idx_to_choose = np.where(self.labels != c)[0]
+            else:
+                idx_to_choose = np.where(self.labels == c)[0]
+                idx_to_choose = np.delete(idx_to_choose, np.argwhere(idx_to_choose == i))
+            self.targets.append(self.images[random.choice(idx_to_choose)])
+            #self.targets.append(random.choice(idx_to_choose))
+        #self.targets = np.array(self.targets, dtype=np.int32)
+        self.targets = np.array(self.targets, dtype=np.object)
 
     def init_from_list(self, filename):
         with open(filename, 'r') as f:
@@ -323,8 +335,6 @@ class Dataset():
             or batch_format.startswith('random_samples_with_mates'):
             size = self.images.shape[0]
             index_queue = np.random.permutation(size)[:,None]
-        elif batch_format in ['ordered_samples']:
-            index_queue = np.arange(self.images.shape[0])[:,None]
         else:
             raise ValueError('IndexQueue: Unknown batch_format: {}!'.format(batch_format))
         for idx in list(index_queue):
@@ -335,7 +345,7 @@ class Dataset():
         ''' Get the indices from index queue and fetch the data with indices.'''
         indices_batch = []
         
-        if batch_format =='random_samples' or batch_format=='ordered_samples':
+        if batch_format =='random_samples':
             while len(indices_batch) < batch_size:
                 indices_batch.extend(self.index_queue.get(block=True, timeout=30)) 
             assert len(indices_batch) == batch_size
@@ -394,7 +404,7 @@ class Dataset():
 
     # Multithreading preprocessing images
     def start_index_queue(self, batch_format):
-        if not (batch_format in ['random_samples', 'ordered_samples'] or \
+        if not (batch_format in ['random_samples'] or \
             batch_format.startswith('random_samples_with_mates')):
             return
         self.index_queue = Queue()
