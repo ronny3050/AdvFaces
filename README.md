@@ -35,14 +35,6 @@ Currently this repo is compatible with Tensorflow r1.14.0.
     ```Shell
     python test_adversaries.py
     ```
-   
-* You can also change the warping extent by using the ```--scale``` argument. For example, the following command doubles the displacement of the warpping control points:
-    ```Shell
-    python test.py pretrained/warpgan_pretrained \
-    data/example/CaptainMarvel.jpg \
-    result/CaptainMarvel \
-    --num_styles 5 --scale 2.0
-    ```
 
 ## <img src="https://image.flaticon.com/icons/svg/48/48541.svg" width="25"/> Pre-trained Model
 ##### OBFUSCATION MODEL: 
